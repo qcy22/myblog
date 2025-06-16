@@ -2775,7 +2775,7 @@ header.header {
   }
 }
 body {
-  background: url("/images/back4.jpg");
+  background: url("/myblog/images/back4.jpg");
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
@@ -2797,7 +2797,7 @@ code {
 .post-body h1 {
   font-family: Times New Roman, cursive, Trebuchet MS, Times New Roman, Lato, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   border-bottom-color: #0c302e;
-  background: url("/images/feather.svg") no-repeat;
+  background: url("/myblog/images/feather.svg") no-repeat;
   padding-left: 48px;
 }
 .back-to-top {
