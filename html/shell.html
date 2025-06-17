@@ -162,8 +162,13 @@
   fortune          Random wisdom. Or nonsense.
 
 📷 Image Functions:
-  img [filename]   Display uploaded ASCII art image.
+  pixel_img [filename]   Display uploaded ASCII art image.
                    Use the "Upload Image" button to upload first.
+  img [url]   Fetch and display an image from URL.
+
+🎲 Game of Thrones:
+  throne_character    Display a random Game of Thrones character.
+  throne_quote        Display a random quote from Game of Thrones.
 
 🎨 Appearance:
   theme [dark|light]  Flip the vibe switch.
@@ -422,12 +427,106 @@
                 startDonutAnimation(duration);
                 return `<span class="cmd-info">Rendering rotating donut for ${duration} second(s)... 🍩</span>`;
             },
-            img: (args) => {
+            pixel_img: (args) => {
                 const filename = args[0];
                 if (!filename) return '<span class="cmd-error">Usage: img [filename]</span>';
                 if (!imageStore[filename]) return `<span class="cmd-error">No such image: ${filename}</span>`;
                 return `<div style="line-height: 0.6; font-family: monospace;">${imageStore[filename]}</div>`;
             },
+            img: (args) => {
+                const url = args[0];
+                if (!url) return '<span class="cmd-error">Usage: fetchimg [url]</span>';
+
+                const id = `img-${Date.now()}`;
+                const imgContainer = `<div id="${id}" class="cmd-info">Loading image from ${url}...</div>`;
+
+                // 使用延迟来确保元素已经添加到DOM
+                setTimeout(() => {
+                    const container = document.getElementById(id);
+                    if (!container) return;
+
+                    const img = new Image();
+                    img.onload = function () {
+                        container.innerHTML = '';
+                        img.style.maxWidth = '100%';
+                        img.style.maxHeight = '300px';
+                        img.style.margin = '10px 0';
+                        container.appendChild(img);
+                        shell.scrollTop = shell.scrollHeight;
+                    };
+                    img.onerror = function () {
+                        container.innerHTML = `<span class="cmd-error">Failed to load image from ${url}</span>`;
+                    };
+                    img.src = url;
+                }, 100);
+
+                return imgContainer;
+            },
+            throne_character: (args) => {
+                const id = `throne-${Date.now()}`;
+                fetch('https://qcy-test.deno.dev/throne_character')
+                    .then(res => res.json())
+                    .then(data => {
+                        const element = document.getElementById(id);
+                        if (element) {
+                            element.innerHTML = `
+                        <div style="border: 1px solid #0f0; padding: 10px; margin: 10px 0; max-width: 400px; background-color: rgba(0, 50, 0, 0.3);">
+                            <div style="display: flex; align-items: center;">
+                                <div style="margin-right: 15px; min-width: 120px;">
+                                    <img src="${data.imageUrl}" alt="${data.fullName}" 
+                                        style="max-width: 120px; max-height: 160px; border: 1px solid #0f0;">
+                                </div>
+                                <div>
+                                    <h3 style="color: #0ff; margin: 0 0 10px 0; font-size: 18px;">${data.fullName}</h3>
+                                    <p style="margin: 5px 0; color: #0f0;"><strong>Title:</strong> <span style="color: #ff0;">${data.title || 'None'}</span></p>
+                                    <p style="margin: 5px 0; color: #0f0;"><strong>Family:</strong> <span style="color: #ff0;">${data.family || 'Unknown'}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                        }
+                    })
+                    .catch(err => {
+                        const element = document.getElementById(id);
+                        if (element) {
+                            element.innerHTML = `<span class="cmd-error">Failed to fetch character data: ${err.message}</span>`;
+                        }
+                    });
+
+                return `<span class="cmd-info" id="${id}">Loading character data...</span>`;
+            },
+            throne_quote: () => {
+                const id = `throne-quote-${Date.now()}`;
+                fetch('https://qcy-test.deno.dev/throne_quote')
+                    .then(res => res.json())
+                    .then(data => {
+                        const element = document.getElementById(id);
+                        if (element) {
+                            element.innerHTML = `
+                        <div style="border: 1px solid #0f0; padding: 15px; margin: 10px 0; max-width: 500px; background-color: rgba(0, 50, 0, 0.3);">
+                            <p style="color: #0ff; font-size: 16px; margin: 0 0 10px 0;">
+                                <i>"${data.sentence}"</i>
+                            </p>
+                            <div style="display: flex; justify-content: flex-end;">
+                                <div style="text-align: right;">
+                                    <p style="margin: 5px 0; color: #ff0; font-weight: bold;">— ${data.character.name}</p>
+                                    <p style="margin: 0; color: #0f0; font-size: 14px;">${data.character.house?.name || ''}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                        }
+                    })
+                    .catch(err => {
+                        const element = document.getElementById(id);
+                        if (element) {
+                            element.innerHTML = `<span class="cmd-error">Failed to fetch quote: ${err.message}</span>`;
+                        }
+                    });
+
+                return `<span class="cmd-info" id="${id}">Loading Game of Thrones quote...</span>`;
+            },
+
         };
 
         let userInput = '';
@@ -557,6 +656,20 @@
             } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey) {
                 event.preventDefault();
                 userInput += event.key;
+                renderInput();
+            }
+        });
+
+        input.addEventListener('paste', function (event) {
+            event.preventDefault();
+
+            // 获取剪贴板数据
+            const clipboardData = event.clipboardData || window.clipboardData;
+            const pastedText = clipboardData.getData('text');
+
+            // 将粘贴的文本添加到当前输入
+            if (pastedText) {
+                userInput += pastedText;
                 renderInput();
             }
         });
