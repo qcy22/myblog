@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>GSAP ScrollSmoother + Three.js</title>
+    <link rel="stylesheet" href="./lyrics/style.css">
+
+</head>
+
+<body>
+    <!-- partial:index.partial.html -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chiron+Sung+HK:wght@800" rel="stylesheet">
+
+    <div id="content" class='content smaller-text'>
+        <p id="lyrics">
+            明月光 為何又照<span>地堂</span>
+            寧願在公園<span>躲藏</span> 不想喝湯
+            任由目光 留在漫畫<span>一角</span>
+            為何望母親一眼就如<span>罰留堂</span>
+            孩童只盼望<span>歡樂</span> 大人只知道期望
+            為何都不大懂得努力<span>體恤</span>對方
+            大門外有<span>蟋蟀</span> 迴響卻如同幻覺
+            <span>Shall we talk</span> Shall we talk
+            就當重新手拖手去上<span>學堂</span>
+
+            陪我講 陪我講出我們最後<span>何以生疏</span>
+            誰怕講 誰會可悲得過<span>孤獨</span>探戈
+            難得可以<span>同座</span> 何以要忌諱赤裸
+            如果心聲真有<span>療效</span> 誰怕暴露更多 你別怕我
+
+            螢幕<span>發光</span> 無論什麼都看
+            情人在分手邊緣只敢<span>喝湯</span>
+            若沉默似金 還談什麼<span>戀愛</span>
+            寧願在發聲機器面前<span>笑著忙</span>
+            成人只寄望<span>收穫</span> 情人只聽見承諾
+            為何都不大懂得努力<span>珍惜</span>對方
+            螳螂面對<span>蟋蟀</span> 迴響也如同幻覺
+            <span>Shall we talk</span> Shall we talk
+            就算牙關開始打震 別<span>說謊</span>
+
+            陪我講 陪我講出我們最後<span>何以生疏</span>
+            誰怕講 誰會可悲得過<span>孤獨</span>探戈
+            難得可以<span>同座</span> 何以要忌諱赤裸
+            如果心聲真有<span>療效</span> 誰怕暴露更多
+
+            陪我講 陪我親身正視<span>眼淚</span>誰跌得多
+            無法講 除非彼此已失去了<span>能力</span>觸摸
+            鈴聲可以<span>寧靜</span> 難過卻避不過
+            如果沉默太<span>沉重</span> 別要輕輕帶過
+
+            明月光 為何未照<span>地堂</span>
+            孩兒在公司<span>很忙</span> 不需喝湯
+            <span>And shall we talk</span> 斜陽白趕一趟
+            沉默令我聽得見葉兒<span>聲聲降</span>
+        </p>
+    </div>
+
+    <!-- Three Container -->
+    <div data-app-container></div>
+    <!-- partial -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js'></script>
+    <script src='https://assets.codepen.io/16327/ScrollSmoother.min.js'></script>
+    <script src='https://unpkg.com/three@0.139.2/build/three.min.js'></script>
+    <script src='https://unpkg.com/three@0.139.2/examples/js/controls/OrbitControls.js'></script>
+    <script src="./lyrics/script.js"></script>
+    <script>
+        // 自动处理文本行
+        function processLyrics() {
+            const lyricsElement = document.getElementById('lyrics');
+            const text = lyricsElement.innerHTML;
+
+            // 按行分割文本，保留空行
+            const lines = text.split('\n').map(line => line.trim());
+
+            // 在开头和结尾添加空行，使第一行歌词居中
+            const emptyLines = Array(10).fill('<div class="text-line"></div>');
+            
+
+            // 创建新的HTML结构
+            const contentLines = lines.map(line => {
+                if (line === '') {
+                    return '<br />'; // 空行转换为段落分隔
+                } else if (line.length > 0) {
+                    return `<div class="text-line">${line}</div>`;
+                }
+                return '';
+            }).filter(line => line !== '');
+
+            // 在歌词前后添加空行
+            const processedHTML = [
+                ...emptyLines,
+                ...contentLines,
+                ...emptyLines
+            ].join('\n');
+
+            lyricsElement.innerHTML = processedHTML;
+        }
+
+        // 在DOM加载完成后处理歌词
+        document.addEventListener('DOMContentLoaded', processLyrics);
+
+        // 动态字体大小控制
+        function updateTextSizes() {
+            const screenCenterY = window.innerHeight / 2;
+            const textLines = document.querySelectorAll('.text-line');
+
+            let closestLine = null;
+            let minDistance = Infinity;
+
+            // 找到距离屏幕中心最近的文本行
+            textLines.forEach(line => {
+                const rect = line.getBoundingClientRect();
+                const lineCenterY = rect.top + rect.height / 2;
+                const distance = Math.abs(lineCenterY - screenCenterY);
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestLine = line;
+                }
+            });
+
+            // 为所有文本行设置大小
+            textLines.forEach(line => {
+                if (line === closestLine) {
+                    // 最靠近中心的行：根据距离调整大小
+                    const rect = line.getBoundingClientRect();
+                    const lineCenterY = rect.top + rect.height / 2;
+                    const distance = Math.abs(lineCenterY - screenCenterY);
+
+                    // 使用更大的影响范围，让变化更平滑
+                    const maxDistance = window.innerHeight * 0.3;
+                    const normalizedDistance = Math.min(distance / maxDistance, 1);
+
+                    // 使用更平滑的缓动函数
+                    const smoothFactor = Math.cos(normalizedDistance * Math.PI / 2);
+                    const fontSize = 1.2 + (smoothFactor * 1.3); // 1.2em 到 2.5em
+
+                    gsap.to(line, {
+                        fontSize: fontSize + 'em',
+                        duration: 0.4,
+                        ease: 'power1.out'
+                    });
+                } else {
+                    // 其他行保持默认大小
+                    gsap.to(line, {
+                        fontSize: '1.2em',
+                        duration: 0.4,
+                        ease: 'power1.out'
+                    });
+                }
+            });
+        }
+
+        // 使用节流函数优化性能
+        let ticking = false;
+        function requestTick() {
+            if (!ticking) {
+                requestAnimationFrame(updateTextSizes);
+                ticking = true;
+            }
+        }
+
+        function handleScroll() {
+            ticking = false;
+            requestTick();
+        }
+
+        // 初始化和事件监听
+        window.addEventListener('load', updateTextSizes);
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('resize', updateTextSizes);
+    </script>
+
+</body>
+
+</html>

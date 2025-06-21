@@ -1,0 +1,247 @@
+html,
+body {
+  min-height: 100vh;
+  background-color: #111;
+  background-image: url('./bg.png');
+  /* 添加背景图片 */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+.content {
+  color: white;
+  font-family: "Pacifico", cursive;
+  padding: 3vw;
+  padding-top: 9vh;
+  font-size: calc(28px + 96 * (100vw - 300px) / 1200);
+}
+
+.content span {
+  --h: 0;
+  --s: 100%;
+  --l: 80%;
+  --color-light: hsl(var(--h), var(--s), var(--l));
+  --color-dark: hsl(calc(var(--h) + 30), var(--s), var(--l));
+  position: relative;
+  color: var(--color-light);
+  display: inline;
+  background: linear-gradient(to right, var(--color-light), var(--color-dark)), no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-box-decoration-break: clone;
+}
+
+.text-line:nth-child(1) span {
+  --h: 178;
+}
+
+.text-line:nth-child(2) span {
+  --h: 182;
+}
+
+.text-line:nth-child(3) span {
+  --h: 186;
+}
+
+.text-line:nth-child(4) span {
+  --h: 190;
+}
+
+.text-line:nth-child(5) span {
+  --h: 194;
+}
+
+.text-line:nth-child(6) span {
+  --h: 198;
+}
+
+.text-line:nth-child(7) span {
+  --h: 202;
+}
+
+.text-line:nth-child(8) span {
+  --h: 206;
+}
+
+.text-line:nth-child(9) span {
+  --h: 210;
+}
+
+.text-line:nth-child(10) span {
+  --h: 214;
+}
+
+.text-line:nth-child(11) span {
+  --h: 218;
+}
+
+.text-line:nth-child(12) span {
+  --h: 222;
+}
+
+.text-line:nth-child(13) span {
+  --h: 226;
+}
+
+.text-line:nth-child(14) span {
+  --h: 230;
+}
+
+.text-line:nth-child(15) span {
+  --h: 234;
+}
+
+.text-line:nth-child(16) span {
+  --h: 238;
+}
+
+.text-line:nth-child(17) span {
+  --h: 242;
+}
+
+.text-line:nth-child(18) span {
+  --h: 246;
+}
+
+.text-line:nth-child(19) span {
+  --h: 250;
+}
+
+.text-line:nth-child(20) span {
+  --h: 254;
+}
+
+.text-line:nth-child(21) span {
+  --h: 258;
+}
+
+.text-line:nth-child(22) span {
+  --h: 262;
+}
+
+.text-line:nth-child(23) span {
+  --h: 266;
+}
+
+.text-line:nth-child(24) span {
+  --h: 270;
+}
+
+.text-line:nth-child(25) span {
+  --h: 274;
+}
+
+.text-line:nth-child(26) span {
+  --h: 278;
+}
+
+.text-line:nth-child(27) span {
+  --h: 282;
+}
+
+.text-line:nth-child(28) span {
+  --h: 286;
+}
+
+.text-line:nth-child(29) span {
+  --h: 290;
+}
+
+.text-line:nth-child(30) span {
+  --h: 294;
+}
+
+.text-line:nth-child(31) span {
+  --h: 298;
+}
+
+.text-line:nth-child(32) span {
+  --h: 302;
+}
+
+.text-line:nth-child(33) span {
+  --h: 306;
+}
+
+.text-line:nth-child(34) span {
+  --h: 310;
+}
+
+
+.logo {
+  display: block;
+  padding-bottom: 7rem;
+  margin-top: 20vh;
+}
+
+[data-app-container] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: opacity 1s;
+  opacity: 0;
+}
+
+[data-app-container].is-ready {
+  opacity: 1;
+}
+
+[data-app-container]>canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+[data-app-container]>canvas:focus {
+  outline: none;
+}
+
+[data-app-container]:before,
+[data-app-container]:after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 15vh;
+}
+
+[data-app-container]:before {
+  top: 0;
+  background: linear-gradient(to bottom, black, rgba(0, 0, 0, 0));
+}
+
+[data-app-container]:after {
+  background: linear-gradient(to top, black, rgba(0, 0, 0, 0));
+  bottom: 0;
+}
+
+.smaller-text {
+  font-size: 1.9em;
+  /* 从9em缩小到3em，缩小了3倍 */
+}
+
+.text-line {
+  margin-bottom: 0.8em;
+  /* 增加行间距 */
+  line-height: 1.5;
+  /* 增加行内间距 */
+}
