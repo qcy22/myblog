@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self'">
     <title>GSAP ScrollSmoother + Three.js</title>
     <link rel="stylesheet" href="./lyrics/style.css">
 
@@ -67,7 +68,7 @@
     <script src='https://unpkg.com/three@0.139.2/build/three.min.js'></script>
     <script src='https://unpkg.com/three@0.139.2/examples/js/controls/OrbitControls.js'></script> -->
     <script src='https://cdn.jsdelivr.net/gh/qcy22/images/cloud/gsap.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/gh/qcy22/images/cloud/gsap.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/gh/qcy22/images/cloud/ScrollTrigger.min.js'></script>
     <script src='https://cdn.jsdelivr.net/gh/qcy22/images/cloud/ScrollSmoother.min.js'></script>
     <script src='https://cdn.jsdelivr.net/gh/qcy22/images/cloud/three.min.js'></script>
     <script src='https://cdn.jsdelivr.net/gh/qcy22/images/cloud/OrbitControls.js'></script>
@@ -83,7 +84,7 @@
 
             // 在开头和结尾添加空行，使第一行歌词居中
             const emptyLines = Array(10).fill('<div class="text-line"></div>');
-            
+
 
             // 创建新的HTML结构
             const contentLines = lines.map(line => {
