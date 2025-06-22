@@ -17,6 +17,114 @@
  * 在整个应用中，Experience负责将2D文本内容与3D背景融合，
  * 创造出随着用户滚动而变化的沉浸式体验。
  */
+
+function processLyrics() {
+  const lyricsElement = document.getElementById('lyrics');
+  const text = lyricsElement.innerHTML;
+
+  // 按行分割文本，保留空行
+  const lines = text.split('\n').map(line => line.trim());
+
+  // 在开头和结尾添加空行，使第一行歌词居中
+  const emptyLines = Array(10).fill('<div class="text-line"></div>');
+
+
+  // 创建新的HTML结构
+  const contentLines = lines.map(line => {
+    if (line === '') {
+      return '<br />'; // 空行转换为段落分隔
+    } else if (line.length > 0) {
+      return `<div class="text-line">${line}</div>`;
+    }
+    return '';
+  }).filter(line => line !== '');
+
+  // 在歌词前后添加空行
+  const processedHTML = [
+    ...emptyLines,
+    ...contentLines,
+    ...emptyLines
+  ].join('\n');
+
+  lyricsElement.innerHTML = processedHTML;
+}
+
+// 在DOM加载完成后处理歌词
+document.addEventListener('DOMContentLoaded', processLyrics);
+
+// 动态字体大小控制
+function updateTextSizes() {
+  const screenCenterY = window.innerHeight / 2;
+  const textLines = document.querySelectorAll('.text-line');
+
+  let closestLine = null;
+  let minDistance = Infinity;
+
+  // 找到距离屏幕中心最近的文本行
+  textLines.forEach(line => {
+    const rect = line.getBoundingClientRect();
+    const lineCenterY = rect.top + rect.height / 2;
+    const distance = Math.abs(lineCenterY - screenCenterY);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestLine = line;
+    }
+  });
+
+  // 为所有文本行设置大小
+  textLines.forEach(line => {
+    if (line === closestLine) {
+      // 最靠近中心的行：根据距离调整大小
+      const rect = line.getBoundingClientRect();
+      const lineCenterY = rect.top + rect.height / 2;
+      const distance = Math.abs(lineCenterY - screenCenterY);
+
+      // 使用更大的影响范围，让变化更平滑
+      const maxDistance = window.innerHeight * 0.3;
+      const normalizedDistance = Math.min(distance / maxDistance, 1);
+
+      // 使用更平滑的缓动函数
+      const smoothFactor = Math.cos(normalizedDistance * Math.PI / 2);
+      const fontSize = 1.2 + (smoothFactor * 1.3); // 1.2em 到 2.5em
+
+      gsap.to(line, {
+        fontSize: fontSize + 'em',
+        duration: 0.4,
+        ease: 'power1.out'
+      });
+    } else {
+      // 其他行保持默认大小
+      gsap.to(line, {
+        fontSize: '1.2em',
+        duration: 0.4,
+        ease: 'power1.out'
+      });
+    }
+  });
+}
+
+// 使用节流函数优化性能
+let ticking = false;
+function requestTick() {
+  if (!ticking) {
+    requestAnimationFrame(updateTextSizes);
+    ticking = true;
+  }
+}
+
+function handleScroll() {
+  ticking = false;
+  requestTick();
+}
+
+// 初始化和事件监听
+window.addEventListener('load', updateTextSizes);
+window.addEventListener('scroll', handleScroll, { passive: true });
+window.addEventListener('resize', updateTextSizes);
+
+
+
 class Experience {
   constructor(
     options = {
@@ -202,3 +310,4 @@ class Experience {
 }
 
 new Experience();
+
